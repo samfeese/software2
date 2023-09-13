@@ -143,6 +143,7 @@
     <Compile Include="Forms\Records\CustomerForm.Designer.cs">
       <DependentUpon>CustomerForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\City.cs" />
     <Compile Include="Model\DatabaseConnection.cs" />
     <Compile Include="Model\Login.cs" />
     <Compile Include="Program.cs" />

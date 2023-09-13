@@ -24,11 +24,11 @@ namespace FeeseAppointments.Model
 		public void TestConnection() {
 			try {
 				con.Open();
-				con.Close();
 			}
 			catch(Exception e) {
 				throw new Exception(e.Message);
 			}
+			con.Close();
 
 		}
 
@@ -40,11 +40,11 @@ namespace FeeseAppointments.Model
 				con.Open();
 				MySqlCommand cmd = new MySqlCommand(sqlUser, con);
 				MySqlDataReader reader = cmd.ExecuteReader();
-				
+			
 				if (reader.HasRows) {
+					con.Close();
 					return true;
 				}
-
 				con.Close();
 				return false;
 			}
@@ -52,6 +52,7 @@ namespace FeeseAppointments.Model
 			{
 				throw new Exception(e.Message);
 			}
+			con.Close();
 		}
 
 		public DataTable GetCustomerRecords() {
@@ -62,6 +63,7 @@ namespace FeeseAppointments.Model
 				con.Open();
 				MySqlDataAdapter da = new MySqlDataAdapter(getAllCustomers, con);
 				da.Fill(ds);
+				con.Close();
 				return ds;
 			}
 			catch (Exception e) {
@@ -72,22 +74,63 @@ namespace FeeseAppointments.Model
 
         }
 
-		public void addCustomer(string name, string addr, string phone) {
-			string addCustomer = $"INSERT INTO customer(customerName) VALUES('{name}');";
-			string addPhoneAndAddr = $"INSERT INTO address(address, phone) VALUES('{addr}', '{phone}');";
+		public City[] GetAllCities()
+        {
+			City temp;
+			List<City> cities = new List<City> { };
+			string getCityValues = "SELECT cityId, city FROM city;";
+			
+			
+			try
+            {
+				con.Open();
+				MySqlCommand cmd = new MySqlCommand(getCityValues, con);
+				MySqlDataReader reader = cmd.ExecuteReader();
 
-			con.Open();
+				while (reader.Read())
+                {
+
+					temp = new City { ID = reader.GetInt32(0), Name = reader.GetString(1) };
+					cities.Add(temp);
+                }
+				reader.Close();	
+            }
+            catch (Exception e)
+            {
+				MessageBox.Show(e.Message);
+				
+            }
+			con.Close();
+			return cities.ToArray();
+		}
+
+
+		public void addCustomer(string name, string addr, string addr2, int city, string zip, string phone) {
+			long addrId = -1;
+			
+			string addPhoneAndAddr = $"INSERT INTO address(address, phone, address2, cityId, postalCode, createDate, createdBy, lastUpdate, lastUpdateBy) VALUES('{addr}', '{phone}', '{addr2}', {city}, '{zip}', NOW(), 'test', NOW(), 'test');";
+
+			
 				try
 				{
-					MySqlCommand customerCmd = new MySqlCommand(addCustomer, con);
+					con.Open();
 					MySqlCommand addressCmd = new MySqlCommand(addPhoneAndAddr, con);
-					customerCmd.ExecuteNonQuery();
 					addressCmd.ExecuteNonQuery();
+					addrId = addressCmd.LastInsertedId;
+				if (addrId >= 0)
+				{
+					string addCustomer = $"INSERT INTO customer(customerName, addressId, active, lastUpdate, lastUpdateBy, createDate, createdBy) VALUES('{name}', {addrId}, 1, NOW(), 'test', NOW(), 'test');";
+					MySqlCommand customerCmd = new MySqlCommand(addCustomer, con);
+					customerCmd.ExecuteNonQuery();
+				}
+				else { throw new Exception("address id can not be found"); }
+					
+
 				}
 
 				catch (Exception e)
 				{
-					MessageBox.Show(e.Message);
+					throw new Exception(e.Message);
 				}
 			con.Close();
 			
@@ -99,9 +142,10 @@ namespace FeeseAppointments.Model
 			string updatePhoneAndAddr = $"UPDATE address SET address='{addr}', phone='{phone}' " +
 				$"WHERE addressId=(SELECT addressId FROM customer WHERE customerId={id});";
 
-			con.Open();
+			
 			try
 			{
+				con.Open();
 				MySqlCommand customerCmd = new MySqlCommand(updateCustomer, con);
 				MySqlCommand addressCmd = new MySqlCommand(updatePhoneAndAddr, con);
 				customerCmd.ExecuteNonQuery();

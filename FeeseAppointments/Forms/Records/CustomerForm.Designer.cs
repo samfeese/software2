@@ -37,6 +37,11 @@ namespace FeeseAppointments.Forms.Records
             this.nameInput = new System.Windows.Forms.TextBox();
             this.addressInput = new System.Windows.Forms.TextBox();
             this.phoneInput = new System.Windows.Forms.TextBox();
+            this.address2Text = new System.Windows.Forms.TextBox();
+            this.address2Lbl = new System.Windows.Forms.Label();
+            this.City = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.zipText = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // saveBtn
@@ -47,6 +52,7 @@ namespace FeeseAppointments.Forms.Records
             this.saveBtn.TabIndex = 0;
             this.saveBtn.Text = "Add";
             this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
             // 
             // cancelBtn
             // 
@@ -61,7 +67,7 @@ namespace FeeseAppointments.Forms.Records
             // nameLbl
             // 
             this.nameLbl.AutoSize = true;
-            this.nameLbl.Location = new System.Drawing.Point(143, 74);
+            this.nameLbl.Location = new System.Drawing.Point(139, 9);
             this.nameLbl.Name = "nameLbl";
             this.nameLbl.Size = new System.Drawing.Size(82, 13);
             this.nameLbl.TabIndex = 2;
@@ -70,7 +76,7 @@ namespace FeeseAppointments.Forms.Records
             // addressLbl
             // 
             this.addressLbl.AutoSize = true;
-            this.addressLbl.Location = new System.Drawing.Point(154, 164);
+            this.addressLbl.Location = new System.Drawing.Point(156, 59);
             this.addressLbl.Name = "addressLbl";
             this.addressLbl.Size = new System.Drawing.Size(45, 13);
             this.addressLbl.TabIndex = 3;
@@ -79,7 +85,7 @@ namespace FeeseAppointments.Forms.Records
             // phoneLbl
             // 
             this.phoneLbl.AutoSize = true;
-            this.phoneLbl.Location = new System.Drawing.Point(143, 250);
+            this.phoneLbl.Location = new System.Drawing.Point(139, 285);
             this.phoneLbl.Name = "phoneLbl";
             this.phoneLbl.Size = new System.Drawing.Size(78, 13);
             this.phoneLbl.TabIndex = 4;
@@ -87,7 +93,7 @@ namespace FeeseAppointments.Forms.Records
             // 
             // nameInput
             // 
-            this.nameInput.Location = new System.Drawing.Point(73, 90);
+            this.nameInput.Location = new System.Drawing.Point(73, 25);
             this.nameInput.Name = "nameInput";
             this.nameInput.Size = new System.Drawing.Size(211, 20);
             this.nameInput.TabIndex = 5;
@@ -95,7 +101,7 @@ namespace FeeseAppointments.Forms.Records
             // 
             // addressInput
             // 
-            this.addressInput.Location = new System.Drawing.Point(73, 180);
+            this.addressInput.Location = new System.Drawing.Point(73, 75);
             this.addressInput.Name = "addressInput";
             this.addressInput.Size = new System.Drawing.Size(211, 20);
             this.addressInput.TabIndex = 6;
@@ -103,17 +109,66 @@ namespace FeeseAppointments.Forms.Records
             // 
             // phoneInput
             // 
-            this.phoneInput.Location = new System.Drawing.Point(73, 266);
+            this.phoneInput.Location = new System.Drawing.Point(73, 311);
             this.phoneInput.Name = "phoneInput";
             this.phoneInput.Size = new System.Drawing.Size(211, 20);
             this.phoneInput.TabIndex = 7;
             this.phoneInput.TextChanged += new System.EventHandler(this.phoneInput_TextChanged);
+            // 
+            // address2Text
+            // 
+            this.address2Text.Location = new System.Drawing.Point(73, 131);
+            this.address2Text.Name = "address2Text";
+            this.address2Text.Size = new System.Drawing.Size(211, 20);
+            this.address2Text.TabIndex = 8;
+            this.address2Text.TextChanged += new System.EventHandler(this.address2Text_TextChanged);
+            // 
+            // address2Lbl
+            // 
+            this.address2Lbl.AutoSize = true;
+            this.address2Lbl.Location = new System.Drawing.Point(156, 115);
+            this.address2Lbl.Name = "address2Lbl";
+            this.address2Lbl.Size = new System.Drawing.Size(54, 13);
+            this.address2Lbl.TabIndex = 9;
+            this.address2Lbl.Text = "Address 2";
+            // 
+            // City
+            // 
+            this.City.AutoSize = true;
+            this.City.Location = new System.Drawing.Point(168, 154);
+            this.City.Name = "City";
+            this.City.Size = new System.Drawing.Size(24, 13);
+            this.City.TabIndex = 10;
+            this.City.Text = "City";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(73, 184);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(211, 21);
+            this.comboBox1.TabIndex = 11;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // zipText
+            // 
+            this.zipText.Location = new System.Drawing.Point(73, 247);
+            this.zipText.Name = "zipText";
+            this.zipText.Size = new System.Drawing.Size(211, 20);
+            this.zipText.TabIndex = 12;
+            this.zipText.TextChanged += new System.EventHandler(this.zipText_TextChanged);
             // 
             // CustomerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(379, 418);
+            this.Controls.Add(this.zipText);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.City);
+            this.Controls.Add(this.address2Lbl);
+            this.Controls.Add(this.address2Text);
             this.Controls.Add(this.phoneInput);
             this.Controls.Add(this.addressInput);
             this.Controls.Add(this.nameInput);
@@ -139,5 +194,10 @@ namespace FeeseAppointments.Forms.Records
         private System.Windows.Forms.TextBox nameInput;
         private System.Windows.Forms.TextBox addressInput;
         private System.Windows.Forms.TextBox phoneInput;
+        private System.Windows.Forms.TextBox address2Text;
+        private System.Windows.Forms.Label address2Lbl;
+        private System.Windows.Forms.Label City;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox zipText;
     }
 }

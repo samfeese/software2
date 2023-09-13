@@ -16,6 +16,9 @@ namespace FeeseAppointments.Forms.Records
 		int id;
 		string selectedName;
 		string selectedAddr;
+		string selAddr2;
+		int selCity;
+		string selZip;
 		string selectedPhone;
 
 		private DatabaseConnection db;
@@ -72,7 +75,7 @@ namespace FeeseAppointments.Forms.Records
         {
 			if (id < 0 || selectedName == "")
 			{
-				CustomerForm cust = new CustomerForm(id, selectedName, selectedAddr, selectedPhone);
+				CustomerForm cust = new CustomerForm(id, selectedName, selectedAddr, selectedPhone, selAddr2, selCity, selZip);
 				cust.Show();
 			}
 			else {
@@ -84,7 +87,7 @@ namespace FeeseAppointments.Forms.Records
         {
 			if (id < 0 || selectedName == "")
 			{
-				CustomerForm cust = new CustomerForm(id, selectedName, selectedAddr, selectedPhone);
+				CustomerForm cust = new CustomerForm(id, selectedName, selectedAddr, selectedPhone, selAddr2, selCity, selZip);
 				cust.Show();
 			}
 			else
