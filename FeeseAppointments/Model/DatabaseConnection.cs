@@ -56,7 +56,7 @@ namespace FeeseAppointments.Model
 		}
 
 		public DataTable GetCustomerRecords() {
-			string getAllCustomers = "SELECT c.customerId, c.customerName, a.address, a.phone FROM customer AS c JOIN address AS a ON c.addressId=a.addressId;";
+			string getAllCustomers = "SELECT c.customerId, c.customerName, a.address, a.address2, a.cityId, a.postalCode, a.phone FROM customer AS c JOIN address AS a ON c.addressId=a.addressId;";
 			try
 			{
 				DataTable ds = new DataTable();
@@ -117,13 +117,14 @@ namespace FeeseAppointments.Model
 					MySqlCommand addressCmd = new MySqlCommand(addPhoneAndAddr, con);
 					addressCmd.ExecuteNonQuery();
 					addrId = addressCmd.LastInsertedId;
-				if (addrId >= 0)
-				{
-					string addCustomer = $"INSERT INTO customer(customerName, addressId, active, lastUpdate, lastUpdateBy, createDate, createdBy) VALUES('{name}', {addrId}, 1, NOW(), 'test', NOW(), 'test');";
-					MySqlCommand customerCmd = new MySqlCommand(addCustomer, con);
-					customerCmd.ExecuteNonQuery();
-				}
-				else { throw new Exception("address id can not be found"); }
+					
+					if (addrId >= 0)
+					{
+						string addCustomer = $"INSERT INTO customer(customerName, addressId, active, lastUpdate, lastUpdateBy, createDate, createdBy) VALUES('{name}', {addrId}, 1, NOW(), 'test', NOW(), 'test');";
+						MySqlCommand customerCmd = new MySqlCommand(addCustomer, con);
+						customerCmd.ExecuteNonQuery();
+					}
+					else { throw new Exception("address id can not be found"); }
 					
 
 				}
@@ -136,10 +137,10 @@ namespace FeeseAppointments.Model
 			
 		}
 
-		public void updateCustomer(int id, string name, string addr, string phone)
+		public void updateCustomer(int id, string name, string addr, string addr2, int city, string zip, string phone)
 		{
 			string updateCustomer = $"UPDATE customer SET customerName='{name}' WHERE customerId={id};";
-			string updatePhoneAndAddr = $"UPDATE address SET address='{addr}', phone='{phone}' " +
+			string updatePhoneAndAddr = $"UPDATE address SET address='{addr}', phone='{phone}', address2='{addr2}', cityId={city}, postalCode='{zip}' " +
 				$"WHERE addressId=(SELECT addressId FROM customer WHERE customerId={id});";
 
 			
@@ -156,6 +157,22 @@ namespace FeeseAppointments.Model
 			{
 				MessageBox.Show(e.Message);
 			}
+			con.Close();
+
+		}
+		public void deleteCustomer(int id)
+        {
+			string deleteQuery = $"DELETE FROM customer WHERE id={id};";
+			try
+            {
+				con.Open();
+				MySqlCommand deleteCmd = new MySqlCommand(deleteQuery, con);
+				deleteCmd.ExecuteNonQuery();
+            }
+			catch (Exception e)
+            {
+				MessageBox.Show(e.Message);
+            }
 			con.Close();
 
 		}

@@ -23,7 +23,8 @@ namespace FeeseAppointments.Forms.Records
 
         int _id;
         DatabaseConnection db;
-        City[] cities;
+
+        public Records ParentForm { get; set; }
 
         public CustomerForm()
         {
@@ -38,8 +39,14 @@ namespace FeeseAppointments.Forms.Records
         public CustomerForm(int id, string name, string address, string phone, string addr2, int cityId, string zipcode)
         {
             InitializeComponent();
+            db = new DatabaseConnection();
             add = false;
             saveBtn.Text = "Update";
+
+            comboBox1.DisplayMember = "Name";
+            comboBox1.ValueMember = "ID";
+            comboBox1.DataSource = db.GetAllCities();
+            
 
             _name = name;
             _addr = address;
@@ -54,8 +61,11 @@ namespace FeeseAppointments.Forms.Records
             nameInput.Text = name;
             addressInput.Text = address;
             phoneInput.Text = phone;
-            db = new DatabaseConnection();
-            comboBox1.DataSource = db.GetAllCities();
+            address2Text.Text = addr2;
+            zipText.Text = zipcode;
+            comboBox1.SelectedValue = cityId;
+            Console.WriteLine("hat");
+            
 
 
         }
@@ -65,8 +75,12 @@ namespace FeeseAppointments.Forms.Records
             {
                 try
                 {
-
                     db.addCustomer(_name, _addr, _addr2, _city, _zip, _phone);
+                    if(ParentForm != null)
+                    {
+                        ParentForm.refresh();
+                    }
+                    this.Close();
                 } catch (Exception e)
                 {
                     MessageBox.Show(e.Message);
@@ -74,7 +88,13 @@ namespace FeeseAppointments.Forms.Records
                 
             } else
             {
-                db.updateCustomer(_id, _name, _addr, _phone);
+                db.updateCustomer(_id, _name, _addr, _addr2, _city, _zip, _phone);
+                if (ParentForm != null)
+                {
+                    ParentForm.refresh();
+                }
+                this.Close();
+
             }
             
         }

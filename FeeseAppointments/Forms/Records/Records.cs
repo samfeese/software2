@@ -48,6 +48,7 @@ namespace FeeseAppointments.Forms.Records
         private void addCustomer_Click(object sender, EventArgs e)
 		{ 
 			CustomerForm cust = new CustomerForm();
+			cust.ParentForm = this;
 			cust.Show();
         }
 
@@ -61,6 +62,9 @@ namespace FeeseAppointments.Forms.Records
 				id = int.Parse(r.Cells["customerId"].Value.ToString());
 				selectedName = r.Cells["customerName"].Value.ToString();
 				selectedAddr = r.Cells["address"].Value.ToString();
+				selAddr2 = r.Cells["address2"].Value.ToString();
+				selCity = int.Parse(r.Cells["cityId"].Value.ToString());
+				selZip = r.Cells["postalCode"].Value.ToString();
 				selectedPhone = r.Cells["phone"].Value.ToString();
 			} else
             {
@@ -73,9 +77,10 @@ namespace FeeseAppointments.Forms.Records
 
         private void updateCustomer_Click(object sender, EventArgs e)
         {
-			if (id < 0 || selectedName == "")
+			if (id >= 0)
 			{
 				CustomerForm cust = new CustomerForm(id, selectedName, selectedAddr, selectedPhone, selAddr2, selCity, selZip);
+				cust.ParentForm = this;
 				cust.Show();
 			}
 			else {
@@ -88,12 +93,20 @@ namespace FeeseAppointments.Forms.Records
 			if (id < 0 || selectedName == "")
 			{
 				CustomerForm cust = new CustomerForm(id, selectedName, selectedAddr, selectedPhone, selAddr2, selCity, selZip);
+				cust.ParentForm = this;
 				cust.Show();
 			}
 			else
 			{
 				MessageBox.Show("Please Select a Row to Delete.");
 			}
+		}
+
+		public void refresh()
+        {
+			db = new DatabaseConnection();
+			DataTable ds = db.GetCustomerRecords();
+			dataGridView1.DataSource = ds;
 		}
     }
 }
