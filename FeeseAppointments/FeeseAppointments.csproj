@@ -113,6 +113,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\Appointment\AppointmentInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Appointment\AppointmentInput.Designer.cs">
+      <DependentUpon>AppointmentInput.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Appointment\Appointments.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,10 +150,17 @@
       <DependentUpon>CustomerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\City.cs" />
+    <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\DatabaseConnection.cs" />
     <Compile Include="Model\Login.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\Appointment\AppointmentInput.resx">
+      <DependentUpon>AppointmentInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Appointment\Appointments.resx">
+      <DependentUpon>Appointments.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Home.resx">
       <DependentUpon>Home.cs</DependentUpon>
     </EmbeddedResource>

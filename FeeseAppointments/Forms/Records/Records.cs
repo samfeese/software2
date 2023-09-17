@@ -23,12 +23,16 @@ namespace FeeseAppointments.Forms.Records
 
 		private DatabaseConnection db;
 
-		public Records()
+		int userId;
+
+		public Records(int userId)
 		{
 			InitializeComponent();
 			addCustomer.Enabled = true;
 			updateCustomer.Enabled = true;
 			deleteCustomer.Enabled = true;
+
+			this.userId = userId;
 		}
 
 		private void Records_Load(object sender, EventArgs e)
@@ -40,7 +44,7 @@ namespace FeeseAppointments.Forms.Records
 
 		private void Home_Click(object sender, EventArgs e)
         {
-			Home home = new Home();
+			Home home = new Home(userId);
 			home.Show();
 			Close();
         }

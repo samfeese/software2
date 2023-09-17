@@ -146,7 +146,7 @@ namespace FeeseAppointments.Forms.Records
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
            
-            _city = (int)comboBox1.SelectedValue ;
+            _city = (int)comboBox1.SelectedValue;
         }
 
         private void zipText_TextChanged(object sender, EventArgs e)

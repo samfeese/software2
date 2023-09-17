@@ -22,21 +22,21 @@ namespace FeeseAppointments.Model
 			db = new DatabaseConnection();
 		}
 		
-		public (bool, string) ValidateUser(string username, string password)
+		public (bool, string, int) ValidateUser(string username, string password)
 		{
 		
 			if (username == "" || password == "")
 			{
-				return (false, "You must input values into all fields");
+				return (false, "You must input values into all fields", -1);
 			}
 			
-			bool result = db.GetUserCredentials(username, password);
+			int result = db.GetUserCredentials(username, password);
 
-			if (result == false) {
-				return (false, "Incorrect credentials, try again.");
+			if (result < 0) {
+				return (false, "Incorrect credentials, try again.", result);
 			}
 
-			return (true, "");
+			return (true, "", -1);
 			
 		}
 

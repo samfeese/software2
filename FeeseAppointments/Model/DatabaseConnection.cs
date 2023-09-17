@@ -32,27 +32,29 @@ namespace FeeseAppointments.Model
 
 		}
 
-		public bool GetUserCredentials(string uname, string pass)
+		public int GetUserCredentials(string uname, string pass)
 		{
 			string sqlUser = $"SELECT * FROM user WHERE userName='{uname}' AND password='{pass}';";
 			try
 			{
 				con.Open();
 				MySqlCommand cmd = new MySqlCommand(sqlUser, con);
-				MySqlDataReader reader = cmd.ExecuteReader();
+				int uId = Convert.ToInt32(cmd.ExecuteScalar());
 			
-				if (reader.HasRows) {
+				if (uId >= 0) {
+			
 					con.Close();
-					return true;
+					return uId;
 				}
 				con.Close();
-				return false;
+				return -1;
 			}
 			catch(Exception e)
 			{
+				con.Close();
 				throw new Exception(e.Message);
 			}
-			con.Close();
+			
 		}
 
 		public DataTable GetCustomerRecords() {
@@ -74,6 +76,65 @@ namespace FeeseAppointments.Model
 			return null;
 
         }
+
+		public DataTable GetAppointmentRecords()
+        {
+			string getAllAppointments = "SELECT a.type, a.start, a.end, c.customerName, a.userId, a.customerId FROM appointment AS a JOIN customer AS c ON a.customerId=c.customerId;";
+			try
+			{
+				DataTable ds = new DataTable();
+				con.Open();
+				MySqlDataAdapter da = new MySqlDataAdapter(getAllAppointments, con);
+
+				da.Fill(ds);
+				con.Close();
+				return ds;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			con.Close();
+			return null;
+		}
+
+		public DataTable GetAppointmentRecords(DateTime start, DateTime end)
+		{
+			string getAllAppointments = "SELECT a.type, a.start, a.end, c.customerName, a.userId, a.customerId FROM appointment AS a JOIN customer AS c ON a.customerId=c.customerId;";
+			try
+			{
+				DataTable ds = new DataTable();
+				con.Open();
+				MySqlDataAdapter da = new MySqlDataAdapter(getAllAppointments, con);
+
+				da.Fill(ds);
+
+
+				//lambda function, i dont need the variable r, just the result from each interation in the where clause.
+				var filteredRows = ds.AsEnumerable().Where(r => { 
+					
+					DateTime startAt = r.Field<DateTime>("start");
+					DateTime endAt = r.Field<DateTime>("end");
+
+					return startAt >= start && startAt <= end && endAt >= start && endAt <= end;
+				});
+
+				ds.Rows.Clear();
+				foreach(DataRow row in filteredRows)
+                {
+					ds.ImportRow(row);
+                }
+				con.Close();
+				return ds;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			con.Close();
+			return null;
+		}
+
 
 		public City[] GetAllCities()
         {
@@ -104,10 +165,39 @@ namespace FeeseAppointments.Model
 			con.Close();
 			return cities.ToArray();
 		}
+		public Customer[] GetAllCustomersList()
+		{
+			Customer temp;
+			List<Customer> customers = new List<Customer> { };
+			string getCustomerValues = "SELECT customerId, customerName FROM customer;";
+
+
+			try
+			{
+				con.Open();
+				MySqlCommand cmd = new MySqlCommand(getCustomerValues, con);
+				MySqlDataReader reader = cmd.ExecuteReader();
+
+				while (reader.Read())
+				{
+
+					temp = new Customer { ID = reader.GetInt32(0), Name = reader.GetString(1) };
+					customers.Add(temp);
+				}
+				reader.Close();
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+
+			}
+			con.Close();
+			return customers.ToArray();
+		}
 
 
 		public void addCustomer(string name, string addr, string addr2, int city, string zip, string phone) {
-			long addrId = -1;
+			long addrId;
 			
 			string addPhoneAndAddr = $"INSERT INTO address(address, phone, address2, cityId, postalCode, createDate, createdBy, lastUpdate, lastUpdateBy) VALUES('{addr}', '{phone}', '{addr2}', {city}, '{zip}', NOW(), 'test', NOW(), 'test');";
 
@@ -178,10 +268,23 @@ namespace FeeseAppointments.Model
 
 		}
 
+		public void addAppointment(int custId, int userId, string type, DateTime start, DateTime end)
+		{
+			//INSERT INTO appointment(customerId, userId, type, start, end) VALUES(1, 1, 'hat', '2019-01-01 00:00:00', '2019-01-01 00:00:00'); works except it will need to default all of the feilds that dont matter.
+			string addApptQuery = $"INSERT INTO appointment(custumerId, userId, type, start, end) VALUES({custId}, {userId}, {type}, {start}, {end});";
+			try
+			{
+				con.Open();
+				MySqlCommand apptCmd = new MySqlCommand(addApptQuery, con);
+				apptCmd.ExecuteNonQuery();
+			}
+
+			catch (Exception e)
+			{
+				throw new Exception(e.Message);
+			}
+			con.Close();
+		}
+
 	}
-
-	
-
-	
-
 }

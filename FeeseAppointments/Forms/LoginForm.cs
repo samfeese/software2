@@ -48,12 +48,12 @@ namespace FeeseAppointments.Forms
 			//Exception Handling for invalid user information
 			try
 			{
-				(bool, string) result = login.ValidateUser(username, password);
-				if (result.Item1 == false)
+				(bool, string, int) result = login.ValidateUser(username, password);
+				if (result.Item1 == false && result.Item3 < 0)
 				{
 					throw new Exception(result.Item2);
 				}
-				Home homePage = new Home();
+				Home homePage = new Home(result.Item3);
 				homePage.Show();
 				//Hide();
 			}
