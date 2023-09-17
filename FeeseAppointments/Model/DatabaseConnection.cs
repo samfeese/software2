@@ -62,6 +62,7 @@ namespace FeeseAppointments.Model
 				DataTable ds = new DataTable();
 				con.Open();
 				MySqlDataAdapter da = new MySqlDataAdapter(getAllCustomers, con);
+
 				da.Fill(ds);
 				con.Close();
 				return ds;
@@ -162,7 +163,7 @@ namespace FeeseAppointments.Model
 		}
 		public void deleteCustomer(int id)
         {
-			string deleteQuery = $"DELETE FROM customer WHERE id={id};";
+			string deleteQuery = $"DELETE FROM customer WHERE customerId={id};";
 			try
             {
 				con.Open();

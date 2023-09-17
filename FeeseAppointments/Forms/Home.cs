@@ -27,7 +27,7 @@ namespace FeeseAppointments.Forms
 
 		private void Appointments_Click(object sender, EventArgs e)
 		{
-			Appointments app = new Appointments();
+			Appointment.Appointments app = new Appointment.Appointments();
 			app.Show();
 			Close();
 		}

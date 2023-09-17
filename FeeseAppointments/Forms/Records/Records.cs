@@ -90,11 +90,17 @@ namespace FeeseAppointments.Forms.Records
 
         private void deleteCustomer_Click(object sender, EventArgs e)
         {
-			if (id < 0 || selectedName == "")
+			if (id >= 0)
 			{
-				CustomerForm cust = new CustomerForm(id, selectedName, selectedAddr, selectedPhone, selAddr2, selCity, selZip);
-				cust.ParentForm = this;
-				cust.Show();
+                try
+                {
+					db.deleteCustomer(id);
+					this.refresh();
+				} catch (Exception ex)
+                {
+					MessageBox.Show(ex.Message);
+                }
+				
 			}
 			else
 			{

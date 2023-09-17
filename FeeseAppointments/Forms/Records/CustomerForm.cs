@@ -121,7 +121,21 @@ namespace FeeseAppointments.Forms.Records
 
         private void saveBtn_Click(object sender, EventArgs e)
         {
-            Submit();
+            //validation that no important customer data is empty, allows address2 to be empty,
+            //and Is not possible to put wrong data in as the city field is a locked dropdown. All other fields are free strings.
+            List<string> allValues = new List<string> { _name, _addr, _phone, _city.ToString(), _zip };
+
+            //LINQ and lambda function, throws away the s variable after being used to map over each string and return true or false
+            bool allFilled = allValues.All(s => s != "");
+
+            if (allFilled)
+            {
+                Submit();
+            } else
+            {
+                MessageBox.Show("One or more fields are empty");
+            }
+            
         }
 
         private void address2Text_TextChanged(object sender, EventArgs e)
@@ -132,7 +146,7 @@ namespace FeeseAppointments.Forms.Records
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
            
-            _city = int.Parse(comboBox1.SelectedValue.ToString());
+            _city = (int)comboBox1.SelectedValue ;
         }
 
         private void zipText_TextChanged(object sender, EventArgs e)
