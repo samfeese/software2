@@ -33,12 +33,23 @@ namespace FeeseAppointments.Model
 			int result = db.GetUserCredentials(username, password);
 
 			if (result < 0) {
-				return (false, "Incorrect credentials, try again.", result);
+				return (false, "Incorrect credentials, try again.", -1);
 			}
 
-			return (true, "", -1);
+			return (true, "", result);
 			
 		}
+
+		public bool UpCommingAppt(int user)
+        {
+			int result = db.checkFor15Minutes(user);
+			if (result > 0)
+			{
+				return true;
+			}
+			else { return false; }
+			
+        }
 
 	}
 }

@@ -37,6 +37,7 @@ namespace FeeseAppointments.Forms.Appointment
             this.monthViewRadio = new System.Windows.Forms.RadioButton();
             this.weekViewRadio = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.homeBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.appointmentData)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -48,6 +49,7 @@ namespace FeeseAppointments.Forms.Appointment
             this.appointmentData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.appointmentData.Location = new System.Drawing.Point(46, 12);
             this.appointmentData.Name = "appointmentData";
+            this.appointmentData.ReadOnly = true;
             this.appointmentData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.appointmentData.Size = new System.Drawing.Size(708, 331);
             this.appointmentData.TabIndex = 0;
@@ -71,6 +73,7 @@ namespace FeeseAppointments.Forms.Appointment
             this.updateApptBtn.TabIndex = 2;
             this.updateApptBtn.Text = "Update";
             this.updateApptBtn.UseVisualStyleBackColor = true;
+            this.updateApptBtn.Click += new System.EventHandler(this.updateApptBtn_Click);
             // 
             // deleteApptBtn
             // 
@@ -80,6 +83,7 @@ namespace FeeseAppointments.Forms.Appointment
             this.deleteApptBtn.TabIndex = 3;
             this.deleteApptBtn.Text = "Delete";
             this.deleteApptBtn.UseVisualStyleBackColor = true;
+            this.deleteApptBtn.Click += new System.EventHandler(this.deleteApptBtn_Click);
             // 
             // allViewRadio
             // 
@@ -115,6 +119,7 @@ namespace FeeseAppointments.Forms.Appointment
             this.weekViewRadio.TabStop = true;
             this.weekViewRadio.Text = "Week";
             this.weekViewRadio.UseVisualStyleBackColor = true;
+            this.weekViewRadio.CheckedChanged += new System.EventHandler(this.weekViewRadio_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -128,11 +133,22 @@ namespace FeeseAppointments.Forms.Appointment
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Select View";
             // 
+            // homeBtn
+            // 
+            this.homeBtn.Location = new System.Drawing.Point(184, 425);
+            this.homeBtn.Name = "homeBtn";
+            this.homeBtn.Size = new System.Drawing.Size(75, 23);
+            this.homeBtn.TabIndex = 9;
+            this.homeBtn.Text = "Home";
+            this.homeBtn.UseVisualStyleBackColor = true;
+            this.homeBtn.Click += new System.EventHandler(this.Home_Click);
+            // 
             // Appointments
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 463);
+            this.Controls.Add(this.homeBtn);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.deleteApptBtn);
             this.Controls.Add(this.updateApptBtn);
@@ -158,5 +174,6 @@ namespace FeeseAppointments.Forms.Appointment
         private System.Windows.Forms.RadioButton monthViewRadio;
         private System.Windows.Forms.RadioButton weekViewRadio;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button homeBtn;
     }
 }

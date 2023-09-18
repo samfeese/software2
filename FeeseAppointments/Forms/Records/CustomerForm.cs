@@ -128,7 +128,7 @@ namespace FeeseAppointments.Forms.Records
             //LINQ and lambda function, throws away the s variable after being used to map over each string and return true or false
             bool allFilled = allValues.All(s => s != "");
 
-            if (allFilled)
+            if (allFilled) //Exception Handeling not allowing empty or invalid data
             {
                 Submit();
             } else

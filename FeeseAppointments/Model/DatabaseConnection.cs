@@ -79,7 +79,7 @@ namespace FeeseAppointments.Model
 
 		public DataTable GetAppointmentRecords()
         {
-			string getAllAppointments = "SELECT a.type, a.start, a.end, c.customerName, a.userId, a.customerId FROM appointment AS a JOIN customer AS c ON a.customerId=c.customerId;";
+			string getAllAppointments = "SELECT a.appointmentId, a.type, a.start, a.end, c.customerName, a.userId, a.customerId FROM appointment AS a JOIN customer AS c ON a.customerId=c.customerId;";
 			try
 			{
 				DataTable ds = new DataTable();
@@ -87,6 +87,24 @@ namespace FeeseAppointments.Model
 				MySqlDataAdapter da = new MySqlDataAdapter(getAllAppointments, con);
 
 				da.Fill(ds);
+
+
+				//lambda/LINQ used to iterate over each row and making the times local for the user. The variable row is just used as an iterator, and the return value is what is important.
+				ds.AsEnumerable().ToList().ForEach(row =>
+				{
+					if (row["start"] != DBNull.Value)
+					{
+						DateTime startUtc = row.Field<DateTime>("start");
+						row.SetField("start", startUtc.ToLocalTime());
+					}
+
+					if (row["end"] != DBNull.Value)
+					{
+						DateTime endUtc = row.Field<DateTime>("end");
+						row.SetField("end", endUtc.ToLocalTime());
+					}
+				});
+
 				con.Close();
 				return ds;
 			}
@@ -94,13 +112,16 @@ namespace FeeseAppointments.Model
 			{
 				MessageBox.Show(e.Message);
 			}
-			con.Close();
+			finally
+			{
+				con.Close();
+			}
 			return null;
 		}
 
-		public DataTable GetAppointmentRecords(DateTime start, DateTime end)
+		public DataTable GetAppointmentRecords(string start, string end)
 		{
-			string getAllAppointments = "SELECT a.type, a.start, a.end, c.customerName, a.userId, a.customerId FROM appointment AS a JOIN customer AS c ON a.customerId=c.customerId;";
+			string getAllAppointments = $"SELECT a.appointmentId, a.type, a.start, a.end, c.customerName, a.userId, a.customerId FROM appointment AS a JOIN customer AS c ON a.customerId=c.customerId WHERE a.start BETWEEN '{start}' AND '{end}';";
 			try
 			{
 				DataTable ds = new DataTable();
@@ -109,21 +130,22 @@ namespace FeeseAppointments.Model
 
 				da.Fill(ds);
 
+				//lambda/LINQ used to iterate over each row and making the times local for the user. The variable r is just used as an iterator, and the return value is what is important.
+				ds.AsEnumerable().ToList().ForEach(r =>
+				{
+					if (r["start"] != DBNull.Value)
+					{
+						DateTime utc = r.Field<DateTime>("start");
+						r.SetField("start", utc.ToLocalTime());
+					}
 
-				//lambda function, i dont need the variable r, just the result from each interation in the where clause.
-				var filteredRows = ds.AsEnumerable().Where(r => { 
-					
-					DateTime startAt = r.Field<DateTime>("start");
-					DateTime endAt = r.Field<DateTime>("end");
-
-					return startAt >= start && startAt <= end && endAt >= start && endAt <= end;
+					if (r["end"] != DBNull.Value)
+					{
+						DateTime utc = r.Field<DateTime>("end");
+						r.SetField("end", utc.ToLocalTime());
+					}
 				});
 
-				ds.Rows.Clear();
-				foreach(DataRow row in filteredRows)
-                {
-					ds.ImportRow(row);
-                }
 				con.Close();
 				return ds;
 			}
@@ -131,7 +153,10 @@ namespace FeeseAppointments.Model
 			{
 				MessageBox.Show(e.Message);
 			}
-			con.Close();
+			finally
+			{
+				con.Close();
+			}
 			return null;
 		}
 
@@ -268,10 +293,12 @@ namespace FeeseAppointments.Model
 
 		}
 
-		public void addAppointment(int custId, int userId, string type, DateTime start, DateTime end)
+		public void addAppointment(int custId, int userId, string type, string start, string end)
 		{
-			//INSERT INTO appointment(customerId, userId, type, start, end) VALUES(1, 1, 'hat', '2019-01-01 00:00:00', '2019-01-01 00:00:00'); works except it will need to default all of the feilds that dont matter.
-			string addApptQuery = $"INSERT INTO appointment(custumerId, userId, type, start, end) VALUES({custId}, {userId}, {type}, {start}, {end});";
+			//INSERT INTO appointment(customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdateBy)
+			//VALUES(1, 1, 'not needed', 'not needed', 'not needed', 'not needed', 'TYPE', 'not needed', '2019-01-01 00:00:00', '2019-01-01 00:00:00', NOW(), 'test', NOW(), 'test');  works except it will need to default all of the feilds that dont matter.
+			string addApptQuery = $"INSERT INTO appointment(customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdateBy) VALUES({custId}, {userId}, 'not needed', 'not needed', 'not needed', 'not needed', '{type}', 'not needed', '{start}', '{end}', NOW(), 'test', NOW(), 'test'); ";
+
 			try
 			{
 				con.Open();
@@ -284,6 +311,66 @@ namespace FeeseAppointments.Model
 				throw new Exception(e.Message);
 			}
 			con.Close();
+		}
+
+		public void updateAppointment(int apptId, int custId, int userId, string type, string start, string end)
+        {
+			string updateAppt = $"UPDATE appointment SET customerId={custId}, userId={userId}, type='{type}', start='{start}', end='{end}' WHERE appointmentId={apptId};";
+
+			try
+			{
+				con.Open();
+				MySqlCommand update = new MySqlCommand(updateAppt, con);
+				update.ExecuteNonQuery();
+			}
+
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			con.Close();
+		}
+
+		public void deleteAppointment(int id)
+		{
+			string deleteQuery = $"DELETE FROM appointment WHERE appointmentId={id};";
+			try
+			{
+				con.Open();
+				MySqlCommand deleteCmd = new MySqlCommand(deleteQuery, con);
+				deleteCmd.ExecuteNonQuery();
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			con.Close();
+
+		}
+
+		public int checkFor15Minutes(int userId)
+        {
+			DateTime startTime = DateTime.Now;
+			string startStr = startTime.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss");
+			string next15Min = startTime.AddMinutes(15).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss");
+			string select15 = $"Select COUNT(*) FROM appointment WHERE userId={userId} AND start BETWEEN '{startStr}' AND '{next15Min}';";
+
+			try
+			{
+				con.Open();
+				MySqlCommand cmd = new MySqlCommand(select15, con);
+				int count = Convert.ToInt32(cmd.ExecuteScalar());
+				return count;
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
+			finally
+			{
+				con.Close();
+			}
+			return 0;
 		}
 
 	}

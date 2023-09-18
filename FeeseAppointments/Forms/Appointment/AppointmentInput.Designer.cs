@@ -105,7 +105,7 @@ namespace FeeseAppointments.Forms.Appointment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(628, 351);
             this.Controls.Add(this.addApptBtn);
             this.Controls.Add(this.customerLbl);
             this.Controls.Add(this.comboBox1);

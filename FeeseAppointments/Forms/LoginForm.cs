@@ -45,7 +45,7 @@ namespace FeeseAppointments.Forms
 
 		private void loginBtn_Click(object sender, EventArgs e)
 		{
-			//Exception Handling for invalid user information
+			//Exception Handling for invalid user information with try/catch
 			try
 			{
 				(bool, string, int) result = login.ValidateUser(username, password);
@@ -53,8 +53,22 @@ namespace FeeseAppointments.Forms
 				{
 					throw new Exception(result.Item2);
 				}
-				Home homePage = new Home(result.Item3);
-				homePage.Show();
+				bool hasAppt = login.UpCommingAppt(result.Item3);
+
+                if (hasAppt)
+                {
+					DialogResult confirmed = MessageBox.Show("You have an Appointment in the next 15 Minutes", "Confirm", MessageBoxButtons.OK);
+                    if (confirmed == DialogResult.OK)
+                    {
+						Home hp = new Home(result.Item3);
+						hp.Show();
+					}
+                } else
+                {
+					Home homePage = new Home(result.Item3);
+					homePage.Show();
+				}
+				
 				//Hide();
 			}
 			catch (Exception ex)
